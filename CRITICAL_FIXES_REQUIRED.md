@@ -1,5 +1,20 @@
 # 🚨 CRITICAL SECURITY FIXES REQUIRED
 
+
+## 🔴 DEEPSEC FOLLOW-UP #1: Revalidate current security posture
+
+DeepSec scan date: 2026-06-28. This repo still produced security candidates in `webapp.py` and `.env.example`; the historical audit/fix docs are now partly stale because several original findings appear implemented in current code. Before feature work, do a current-state security pass and close the gap between `SECURITY_AUDIT_REPORT.md`, `SECURITY_FIXES_SUMMARY.md`, and the code.
+
+Priority checks:
+
+1. **Re-run and verify the old critical fixes against current `webapp.py`.** Session isolation, input validation, rate limiting, security headers, and secret exposure appear partially addressed; mark the old items fixed/stale/open with evidence.
+2. **Finish CSRF review for all state-changing routes.** `POST /api/login`, `/api/transactions`, `/api/summary`, `/api/reports`, and `/api/logout` still need an explicit CSRF decision and test coverage if browser-cookie sessions remain the auth model.
+3. **Harden session secrets.** `SESSION_SECRET_KEY` currently falls back to a random value on startup; require a configured stable secret for deployed use so sessions are not silently invalidated and cookie signing is intentional.
+4. **Review CSP.** Current headers allow `script-src 'unsafe-inline'`; either move inline JS out of the page or document why this local-only tool accepts that tradeoff.
+5. **Treat `.env.example` findings as placeholders unless real secrets are present.** Keep examples clearly fake, ensure `.env` remains ignored, and add secret scanning if this repo gets active again.
+6. **Run a full DeepSec process pass when AI Gateway credentials are available.** The last run only completed the fast matcher scan for this repo, not AI investigation.
+
+---
 **URGENT:** The following vulnerabilities must be addressed before any production use or public deployment.
 
 ---
